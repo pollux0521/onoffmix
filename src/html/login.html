@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <title>login</title>
+        <script src="//code.jquery.com/jquery.min.js"></script>
+    </head>
+    <body>
+        <div id="sign-box">
+            <form action="/login" method="post">
+                <input type="text" id="email" name="email" placeholder="이메일 아이디를 입력해주세요(ID@xxxx.com)">
+                <input type="password" id="pw" name="pw" placeholder="비밀번호를 입력해주세요">
+                <button type="submit">로그인</button>
+            </form>
+            <button type="button" onclick="location.href='/register'">회원가입</button>
+        </div>
+    </body>
+</html>
