@@ -7,7 +7,7 @@ $(document).ready(()=>{
         success: function(data) {
             const topMenu= $(".top-service-menu");
             let name = data.name;
-            console.log(name);
+
             if(name == null){
                 topMenu.append("<li class=\"list-item\"><a href=\"/login\">로그인</a></li>");
                 topMenu.append("<li class=\"list-item\"><a href=\"/register\">회원가입</a></li>");
@@ -19,5 +19,25 @@ $(document).ready(()=>{
         },
         cache: false
     });
+
+    $.ajax({
+        url: '/getclass',
+        type: 'POST',
+        async: false,
+        dataType: 'json',
+        success: function(data){
+            const openclass = $(".open-class");
+            let classinfo = "";
+            let info = data;
+            
+            for(let i=0; i<info.length; i++){
+
+                classinfo += "<div><a href='/class/" + info[i].classname + "'>" + info[i].classname + "</a></div>";
+
+            }
+            openclass.append(classinfo);
+            
+        }
+    })
 
 })

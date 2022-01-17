@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="/js/main.js"></script>
+        <script src="/js/openclass.js"></script>
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <div id="top-bar">
+            <ul class="top-service-menu">
+            </ul>
+        </div>
+        <div id="second-bar">
+            <ul class="service-menu">
+                <li class="list-item"><a href="/"><img src="/img/ofm_logo.png"></a></li>
+            </ul>
+        </div>
+        <div id="main-bar">
+            <form action="/class/openclass" method="post">
+                <div class="input-box" id="openclass">
+                    모임명 <input type="text" name="classname"><br>
+                    모임 내용 <input type="text" name="classcontent">
+                </div><br><br><br>
+                <div class="input-box" id="grouplist">
+                    그룹이름 <input type="text" name="groupname"><br>
+                    신청 시작시간 <input type="date" name="sign_start_time">
+                    신청 마감시간 <input type="date" name="sign_end_time"><br>
+                    모임 시작시간 <input type="date" name="class_start_time">
+                    모임 마감시간<input type="date" name="class_end_time"><br>
+                    정원 <input type="number" name="limit_headcount"><br>
+                    선정방법
+                    <input type="radio" name="Approval_type" value="0">개설자승인
+                    <input type="radio" name="Approval_type" value="1">선착순 
+                </div>
+                <button type="button" id="add-group">그룹 추가</button>
+                <button type="submit">모임생성</button>
+            </form>
+        </div>
+    </body>
+</html>
+

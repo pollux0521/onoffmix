@@ -8,8 +8,9 @@ const app           = express();
 
 const Port          = 3001;
 
-const main = require('./routes/main.js');
-const conn = require('./modules/conndb.js');
+const mainRoute      = require('./routes/main.js');
+const classRoute     = require('./routes/class.js'); 
+const conn      = require('./modules/conndb.js');
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
@@ -39,7 +40,8 @@ app.use(
 );
 
 // [ Route ]
-app.use('/', main);
+app.use('/', mainRoute);
+app.use('/class', classRoute);
 
 
 // [ Open Server ]

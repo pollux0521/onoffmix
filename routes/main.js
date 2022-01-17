@@ -10,7 +10,6 @@ const email     = require('../modules/email');
 
 
 router.get("/", (req, res)=>{
-    console.log(req.session.name);
     res.sendFile(rootPath + "main.html", (err)=>{
         if(err){
             console.log(err);
@@ -19,6 +18,14 @@ router.get("/", (req, res)=>{
     });
 });
 
+router.post("/getclass", (req, res)=>{
+    let nowTime = new Date();
+    let sql = "select openclass.classname, openclass.uid, headcount, viewcount, register_time from openclass inner join grouplist on openclass.classname = grouplist.classname and grouplist.sign_end_time > ?";
+    conn.query(sql, nowTime, (err, row, params)=>{
+        console.log(row);
+        res.send(row);
+    });
+});
 /*
 
 router.get("/", (req,res)=>{});
@@ -54,8 +61,8 @@ router.post("/login", (req,res)=>{
 
         }
         else{
-            req.session.email = row[0].email;
             req.session.name = row[0].name;
+            req.session.uid = row[0].uid;
             req.session.save(()=>{
                 res.redirect("/");
             });

@@ -1,0 +1,16 @@
+div{
+    border: 1px solid black;
+    display:flex;
+    flex-direction: column;
+}
+form{
+    display:flex;
+    flex-direction: column;
+}
+
+ul li {
+    list-style-type: none; 
+    padding-right: 10px;
+    float: left;
+}
+
