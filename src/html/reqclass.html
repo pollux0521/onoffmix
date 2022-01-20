@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="/js/main.js"></script>
+        <script src="/js/reqclass.js"></script>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <div id="top-bar">
+            <ul class="top-service-menu">
+            </ul>
+        </div>
+        <div id="second-bar">
+            <ul class="service-menu">
+                <li class="list-item"><a href="/"><img src="/img/ofm_logo.png"></a></li>
+            </ul>
+        </div>
+        <div class="third-bar">
+            <div class="req-class">
+                <div class="classname"></div>
+                <div class="groupname"></div>
+                <div class="req-class">
+                    <form class="send"action="/class/reqclass" method="post">
+                        <h3>신청사유 (최대 200자)</h3>
+                        <p><textarea cols="50" rows="10" name="reasons"></textarea></p>
+                        <p><button id="req-class-button" type="button" >신청하기</button></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

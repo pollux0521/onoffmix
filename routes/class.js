@@ -11,6 +11,23 @@ const makeclass = require('../modules/makeclass');
 const session = require('express-session');
 const { resolve } = require('path');
 
+router.post('/reqclass', (req, res)=>{
+
+    let rqSQL = "INSERT INTO reqclass(classname, uid, reasons, approval_status)VALUE(?,?,?,?)"
+
+    let rqParams = [req.body.classname, req.session.uid, req.body.reasons, 0];
+    conn.query(rqSQL, rqParams, (err, row, fields)=>{
+        if(err){
+            console.log(err);
+            res.end();
+        }
+        else{
+            res.send("<script>alert('신청이 완료되었습니다.');location.href='/class/"+ req.body.classname+"';</script>");
+        }
+    })
+
+})
+
 
 router.get('/:classname', (req, res)=>{
     res.sendFile(rootPath + "classname.html");
@@ -26,13 +43,13 @@ router.post('/:classname', (req, res)=>{
                 res.end();
             }
             else{
-
+                console.log(ocrow[0].classname);
                 resolve(ocrow);
             }
         })
     })
     resultData.then((ocrow)=>{
-        console.log(ocrow[0].classname);
+        console.log(ocrow[0]);
         glSQL = "select * from grouplist where classname=?"
         conn.query(glSQL, ocrow[0].classname, (err, glrows, fields)=>{
             if(err){
@@ -48,10 +65,41 @@ router.post('/:classname', (req, res)=>{
 });
 
 router.get('/reqclass/:classname/:groupname', (req, res)=>{
-    console.log(req.params.classname + req.params.groupname);
-    res.end();
+    if(req.session.name == null){
+        res.redirect('/login');
+    }
+    else{
+        res.sendFile(rootPath + "reqclass.html");
+    }
+
 })
 
+router.post('/reqclass/:classname/:groupname', (req, res)=>{
+    let resultData = new Promise((resolve, reject)=>{
+        let ocSQL = "select * from openclass where classname=?"
+        conn.query(ocSQL, req.params.classname, (err, ocrow, fields)=>{
+            if(err){
+                console.log(err);
+                res.end();
+            }
+            else{
+                resolve(ocrow);
+            }
+        })
+    })
+    resultData.then((ocrow)=>{
+        glSQL = "select * from grouplist where groupname=?"
+        conn.query(glSQL, req.params.groupname, (err, glrows, fields)=>{
+            if(err){
+                console.log(err);
+                res.end();
+            }
+            else{
+                res.send([ocrow[0], glrows[0]]);
+            }
+        })
+    })
+});
 
 
 router.get('/openclass', (req, res)=>{

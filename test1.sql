@@ -33,3 +33,4 @@ CREATE TABLE reqclass(
 ALTER TABLE users ADD COLUMN group_count int not null default 0;
 select openclass.classname, openclass.uid, headcount, viewcount, register_time from openclass inner join grouplist on openclass.classname = grouplist.classname;
 
+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

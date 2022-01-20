@@ -13,7 +13,7 @@ $(document).ready(()=>{
                 topMenu.append("<li class=\"list-item\"><a href=\"/register\">회원가입</a></li>");
             }
             else{
-                topMenu.append("<li class=\"list-item\"><a href=\"/login\">"+name +"님</a></li>");
+                topMenu.append("<li class=\"list-item\"><a href=\"/mypage\">"+name +"님</a></li>");
                 topMenu.append("<li class=\"list-item\"><a href=\"/logout\">로그아웃</a></li>");
             }
         },

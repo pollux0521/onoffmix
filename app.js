@@ -8,9 +8,11 @@ const app           = express();
 
 const Port          = 3001;
 
-const mainRoute      = require('./routes/main.js');
-const classRoute     = require('./routes/class.js'); 
-const conn      = require('./modules/conndb.js');
+const mainRoute     = require('./routes/main.js');
+const classRoute    = require('./routes/class.js');
+const mypageRoute   = require('./routes/mypage.js');
+const senddataRoute = require('./routes/senddata.js');  
+const conn          = require('./modules/conndb.js');
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
@@ -42,6 +44,8 @@ app.use(
 // [ Route ]
 app.use('/', mainRoute);
 app.use('/class', classRoute);
+app.use('/mypage', mypageRoute);
+app.use('/senddata', senddataRoute);
 
 
 // [ Open Server ]
