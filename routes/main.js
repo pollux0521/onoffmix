@@ -113,7 +113,7 @@ router.post("/register", (req,res)=>{
 
 // email validate
 router.post("/emailcheck", (req,res)=>{
-    res.send(isRegisteredEmail(req.body.email));
+    res.send(email.isRegisteredEmail(req.body.email));
 });
 
 module.exports = router;

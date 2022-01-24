@@ -257,6 +257,7 @@ function FindClasses(uid){
 };
 //수정필요
 function UpdateUserStatus(uid, classname, groupname){
+    console.log(uid);
     return new Promise((resolve, reject)=>{
         let sql = "update reqclass set approval_status= NOT approval_status where classname=? and groupname=? and uid=?"
         conn.query(sql, [classname, groupname, uid], (err, row, fields)=>{

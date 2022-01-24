@@ -30,6 +30,8 @@ CREATE TABLE reqclass(
     FOREIGN KEY(uid) REFERENCES users(uid)
 );
 
+https://gist.github.com/vinodpandey/1a4b5b8228f9a000ca236820185fc3bc
+
 ALTER TABLE users ADD COLUMN group_count int not null default 0;
 select openclass.classname, openclass.uid, headcount, viewcount, register_time from openclass inner join grouplist on openclass.classname = grouplist.classname;
 

@@ -7,7 +7,8 @@ const rootPath  = path.join(__dirname, '../src/html/');
 const conn      = require('../modules/conndb');
 const email     = require('../modules/email');
 const dbmodule  = require('../modules/dbmodule');
-
+const utf8      = require('utf8');
+const { decode } = require('punycode');
 router.post("/getclass", (req, res)=>{
     let nowTime = new Date();
     let sql = "select distinct openclass.classname, openclass.uid, headcount, viewcount, register_time from openclass inner join grouplist on openclass.classname = grouplist.classname and grouplist.sign_end_time > ?";
@@ -19,8 +20,8 @@ router.post("/getclass", (req, res)=>{
 
 router.post("/change", (req, res)=>{
     let path = req.body.path.split('/').reverse();
-    let groupname = path[0];
-    let classname = path[1];
+    let groupname = (path[0][0] == "%")? decodeURI(path[0]):path[0];
+    let classname = (path[1][0] == "%")? decodeURI(path[1]):path[1];;
     let uid = req.body.uid;
 
     let promise = dbmodule.UpdateUserStatus(uid, classname, groupname);
