@@ -1,7 +1,7 @@
 const conn      = require('./conndb');
 
 async function makeClass(params){
-    let ocSQL = "INSERT INTO openclass(classname, uid, classcontent, headcount, viewcount, register_time)VALUE(?,?,?,?,?,?)";
+    let ocSQL = "INSERT INTO openclass(classname, uid, groupname, classcontent, headcount, viewcount, register_time)VALUE(?,?,?,?,?,?,?)";
     conn.query(ocSQL, params, (err, row, fields)=>{
         if(err){
             console.log(err);

@@ -18,14 +18,7 @@ router.get("/", (req, res)=>{
     });
 });
 
-router.post("/getclass", (req, res)=>{
-    let nowTime = new Date();
-    let sql = "select openclass.classname, openclass.uid, headcount, viewcount, register_time from openclass inner join grouplist on openclass.classname = grouplist.classname and grouplist.sign_end_time > ?";
-    conn.query(sql, nowTime, (err, row, params)=>{
-        console.log(row);
-        res.send(row);
-    });
-});
+
 /*
 
 router.get("/", (req,res)=>{});

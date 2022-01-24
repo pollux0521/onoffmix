@@ -4,7 +4,7 @@ $(document).ready(()=>{
         return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
     }
     $.ajax({
-        url: window.location.pathname,
+        url: '/senddata'+window.location.pathname,
         type: 'POST',
         async: false,
         dataType: 'json',
@@ -12,12 +12,12 @@ $(document).ready(()=>{
             const classname = $(".classname");
             let classinfo = "";
             let info = data;
-
+            console.log(info[1].length);
             classinfo += "<div><h1>제목 :"+ info[0].classname +"</h1></div>";
             classinfo += "<div> 내용 :"+ info[0].classcontent+ "</div>";
-            classinfo += "<div> 모임기간 " + info[1].class_start_time + " ~ " + info[1].class_end_time + "</div>";
+            classinfo += "<div> 모임기간 " + info[1][0].class_start_time + " ~ " + info[1][0].class_end_time + "</div>";
 
-            if ((info[1]).length == null){
+            if (info[1].length == 1){
                 classinfo += "<div class=\"grouplist\"><div clas=\"groupname\"><div> 그룹이름:" + info[1].groupname + "</div></div>";
                 if(info[1].Approval_type == true) classinfo += "<div class=\"Approval-type\"> 개발자선정 </div>";
                 else classinfo += "<div class=\"Approval-type\"> 선착순 </div>"
@@ -36,11 +36,7 @@ $(document).ready(()=>{
                     classinfo += "<button type=\"button\"><a href=\"/class/reqclass/"+info[0].classname +"/" + info[1][i].groupname+"\">신청하기</a></button></div>";
                 }
             }
-            
-
             classname.append(classinfo);
-    
-            
         }
     })
 })

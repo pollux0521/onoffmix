@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="/js/main.js"></script>
+        <script src="/js/editClass.js"></script>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <div id="top-bar">
+            <ul class="top-service-menu">
+            </ul>
+        </div>
+        <div id="second-bar">
+            <ul class="service-menu">
+                <li class="list-item"><a href="/"><img src="/img/ofm_logo.png"></a></li>
+            </ul>
+        </div>
+        <div class="third-bar">
+            <form id="editClass" action="/mypage/editClass" method="post">
+                <h3 class="classname"></h3>
+                <input type="text" name="editClassname" placeholder="제목을 입력해 주세요">
+                <h3 class="classcontent"></h3>
+                <textarea type="text" name="editClasscontent" placeholder="내용을 입력해 주세요"></textarea>
+                <button type="submit">수정하기</button>
+            </form>
+        </div>
+    </body>
+</html>

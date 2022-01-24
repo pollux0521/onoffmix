@@ -2,6 +2,8 @@ const conn      = require('./conndb');
 const emailfunc = require('./email');
 const crypto    = require('crypto');
 const { resolve } = require('path');
+const { response } = require('express');
+const { promiseImpl } = require('ejs');
 
 // [ Select Login => 1 : 성공, 0 : 데이터 없음, err:err ]
 async function LoginFunc(email, pw){
@@ -62,94 +64,409 @@ async function GetClasses(){
 };
 
 // [ Select Find Class use classname ]
-async function FindClass(classname){
-    let ocSQL = "select * from openclass where classname=?"
-    conn.query(ocSQL, classname, (err, ocrow, fields)=>{
-        if(err) return  err;
-        else return row;
+function FindClass(classname, uid){
+    return new Promise((resolve, reject)=>{
+        let ocSQL = "select * from openclass where classname=? and uid=?"
+        conn.query(ocSQL, [classname, uid], (err, row, fields)=>{
+            if(err) 
+                resolve(err);
+
+            else if(row.length == 0)  {
+                resolve(0);
+            }
+
+            else{
+                resolve(row);
+            }
+               
+        })
+    })
+};
+
+function FindClass(classname){
+
+    return new Promise((resolve, reject)=>{
+        let ocSQL = "select * from openclass where classname=?"
+        conn.query(ocSQL, [classname], (err, row, fields)=>{
+            if(err) 
+                resolve(err);
+
+            else if(row.length == 0){
+                resolve(0);
+            }
+            else
+                resolve(row);
+        })
     })
 };
 
 // [ Select Find openclass use uid ]
-async function FindClasses(uid){
-    let sql = "select * from openclass where uid=?";
-    conn.query(sql, uid, (err, row, fields)=>{
-        if(err) return  err;
-        else if(row.length == 0) {
-            console.log("length - 0");
-            return 0;
-        }
-        else{
+function FindClasses(uid){
+    return new Promise((resolve, reject)=>{
+        let sql = "select * from openclass where uid=?";
+        conn.query(sql, uid, (err, row, fields)=>{
+            if(err) 
+                resolve(err);
 
-            return 0;
+            else if(row.length == 0)  
+                resolve(0);
 
-        } 
-    });
+            else
+                resolve(row);
+        });
+    })
 };
 
 // [ Select Find Groups use classname ]
-async function FindGrouplist(classname){
-    let sql = "select * from grouplist where classname=?";
-    conn.query(sql, classname, (err, row, fields)=>{
-        if(err) return  err;
-        else return row;
+function FindGrouplist(classname){
+    return new Promise((resolve, reject)=>{
+        let sql = "select * from grouplist where classname=?";
+        conn.query(sql, classname, (err, row, fields)=>{
+            if(err) resolve("err");
+            else 
+                resolve(row);
+        })
     })
 };
 
 // [ Select Find Group use groupname ]
-async function FindGroup(groupname){
-    let sql ="select * from grouplist where groupname=?"
-    conn.query(sql, classname, (err, row, fields)=>{
-        if(err) return err;
-        else return row;
+function FindGroup(classname, groupname){
+    return new Promise((resolve, reject)=>{
+        let sql ="select * from grouplist where classname=? and groupname=?";
+        conn.query(sql, [classname, groupname], (err, row, fields)=>{
+            if(err) {
+                console.log(err);
+                resolve ("err");
+            }
+            else if(row == null){
+                console.log(row);
+                resolve(0);
+            }
+            else {
+                resolve (row);
+            }
+        })
     })
 };
 
+function FindReqclassList(classname, groupname){
+    return new Promise((resolve, reject)=>{
+        let sql = "select * from reqclass where classname=? and groupname=?";
+        conn.query(sql, [classname, groupname], (err, row, fields)=>{
+            if(err) resolve(err);
+            else resolve(row);
+        })
+    })
+}
 // [ Insert reqclass ]
-async function InsertReqclass(classname, uid, reasons){
-    let sql = "insert into reqclass(classname, uid, reasons, approval_status)value(?,?,?,?)";
-    let params = [classname, uid, reasons, 0];
-    conn.query(sql, params, (err,row,fields)=>{
-        if(err) return err;
-        else return 1;
+function InsertReqclass(classname, groupname, uid, reasons, name){
+    return new Promise((resolve, reject)=>{
+        resolve(FindGroup(classname, groupname))
+    }).then((row)=>{
+        let sql = "insert into reqclass(classname, groupname, uid, reasons, approval_status, name)value(?,?,?,?,?,?)";
+        let params = [classname, groupname, uid, reasons, row[0].Approval_type, name];
+        conn.query(sql, params, (err,row,fields)=>{
+            if(err){
+                console.log(err);
+                resolve(err);
+            } 
+            else resolve(1);
+        })
     })
 };
 
 // [ Insert openclass ]
-async function makeClass(classname, uid, classcontent){
-    let sql = "INSERT INTO openclass(classname, uid, classcontent, headcount, viewcount, register_time)VALUE(?,?,?,?,?,?)";
-    let params = [classname, uid, classcontent, 0, 0, new Date()];
-    conn.query(ocSQL, params, (err, row, fields)=>{
-        if(err) return err;
-        else return 1;
-    });
+function makeClass(classname, uid, classcontent){
+    return new Promise((resolve, reject)=>{
+        let sql = "INSERT INTO openclass(classname, uid, classcontent, headcount, viewcount, register_time)VALUE(?,?,?,?,?,?)";
+        let params = [classname, uid, classcontent, 0, 0, new Date()];
+        conn.query(sql, params, (err, row, fields)=>{
+            if(err ){
+                console.log(err)
+                resolve("err");
+
+            } 
+            else resolve(1);
+        })
+    })
 };
 
 // [ Insert grouplist ]
-async function grouplist(params){
-    let sql = "INSERT INTO grouplist(groupname, uid, sign_start_time, sign_end_time, class_start_time, class_end_time, limit_headcount, Approval_type, classname)VALUE(?,?,?,?,?,?,?,?,?)"
-    conn.query(sql, params, (err, row, fields)=>{
-        if(err) return  err;
-        else return 1;
-    });
+function makeGrouplist(params){
+    return new Promise((resolve, reject)=>{
+        let sql = "INSERT INTO grouplist(groupname, classname, uid, sign_start_time, sign_end_time, class_start_time, class_end_time, limit_headcount, Approval_type, Approval_headcount)VALUE(?,?,?,?,?,?,?,?,?,?)"
+        conn.query(sql, params, (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve(err);
+            } 
+            else{
+                console.log(row);
+                resolve (1);
+            } 
+        });
+    })
 };
-
+function makeGroups(params){
+    return new Promise((resolve, reject)=>{
+        console.log(params);
+        let sql = "insert into grouplist(groupname, classname, uid, sign_start_time, sign_end_time, class_start_time, class_end_time, limit_headcount, Approval_type, Approval_headcount) values ?;";
+        conn.query(sql, [params], (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve("err");
+            } 
+            else{
+                console.log(row);
+                resolve (1);
+            } 
+        });
+    })
+};
 // [ Select reqclass Use uid ]
-async function FindReqclass(uid){
-    let sql = "select * from reqclass where uid=?";
-    
-    conn.query(sql, uid, (err, row, fields)=>{
-        if(err) return  err;
-        else if(row.length == 0){
-            console.log("reqlength - 0");
-            return 0;
-        } 
-        else{
-            console.log("err");
-            return row;
-        } 
+function FindReqclass(uid){
+    return new Promise((resolve, reject)=>{
+        let sql = "select * from reqclass where uid=?";
+        conn.query(sql, uid, (err, row, fields)=>{
+            if(err) 
+                resolve(err);
+
+            else if(row.length == 0)
+                resolve (0);
+            
+            else
+                resolve (row);
+        });
+    })
+}
+function FindClasses(uid){
+    return new Promise((resolve, reject)=>{
+        let sql = "select * from openclass where uid=?";
+        conn.query(sql, uid, (err, row, fields)=>{
+            if(err) 
+                resolve(err);
+
+            else if(row.length == 0)  {
+                console.log(row);
+                resolve(0);
+            }
+            else
+                resolve(row);
+        });
+    })
+};
+//수정필요
+function UpdateUserStatus(uid, classname, groupname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update reqclass set approval_status= NOT approval_status where classname=? and groupname=? and uid=?"
+        conn.query(sql, [classname, groupname, uid], (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve(err);
+            }
+            else{
+                console.log("is right?");
+                resolve(1);
+            }
+        });
     });
 }
 
+function UpdateGrouplistClassname(classname, editClassname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update grouplist set classname=? where classname=?";
+        conn.query(sql, [editClassname, classname], (err, row, fields)=>{
+            if(err) {
+                console.log(err);
+                resolve(err);
+            }
+            else {
+                console.log("success");
+                resolve(1);}
+        })
+    })
+}
+
+function UpdateReqclassClassname(classname, editClassname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update reqclass set classname=? where classname=?";
+        conn.query(sql, [editClassname, classname], (err, row, fields)=>{
+            if(err){
+                resolve(err);
+            } 
+            else {
+                console.log("success");
+                resolve(1);
+            }
+        })
+    })
+}
+
+function UpdateClassname(classname, editClassname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update openclass set classname=? where classname=?";
+        conn.query(sql, [editClassname, classname], (err, row, fields)=>{
+            if(err) {
+                console.log(err);
+                resolve(err);
+            }
+            else {
+                console.log(111);
+                resolve(1);
+            }
+        });
+    });
+}
+
+function UpdateClasscontent(classname, classcontent){
+    return new Promise((resolve, reject)=>{
+        let sql = "update openclass set classcontent=? where classname=?";
+        conn.query(sql, [classcontent, classname], (err, row, fields)=>{
+            if(err) {
+                console.log(err);
+                resolve(err);
+            }
+            else {
+
+                resolve(1);
+            }
+        });
+    });
+}
+
+function UpdateApprovalStatus(classname, groupname, Approval_status){
+    return new Promise((resolve, reject)=>{
+        let sql ="update reqclass set Approval_status=? where classname=? and groupname=?";
+        conn.query(sql, [Approval_status, classname, groupname], (err, row, fields)=>{
+            if(err) resolve(err);
+            else resolve(1);
+        });
+    });
+}
+
+
+function UpdateAllClassname(classname, editClassname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update reqclass as a, grouplist as b, openclass as c "
+        sql += "set a.classname=?, b.classname=?, c.classname=? "
+        sql += "where a.classname=? and b.classname=? and c.classname=?";
+        conn.query(sql, [editClassname,editClassname,editClassname, classname,classname,classname], (err, row, fields)=>{
+            if(err){
+                resolve(err);
+            } 
+            else {
+                console.log("success");
+                resolve(1);
+            }
+        })
+    })
+}
+function UpdateGroup(params){
+    return new Promise((resolve, reject)=>{
+        let sql = "update grouplist set groupname=?, sign_start_time=?, sign_end_time=?, class_start_time=?, class_end_time=?, "
+        sql += "limit_headcount=?, Approval_type=? where classname=? and groupname=?";
+    
+        conn.query(sql, params, (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve("err");
+            } 
+            else resolve(1);
+        });
+    });
+}
+function deleteReqclass(uid, classname, groupname){
+    return new Promise((resolve, reject)=>{
+        let sql = "delete from reqclass where uid=? and classname=? and groupname=?";
+        conn.query(sql, [uid, classname, groupname], (err,row,fields)=>{
+            if(err){
+                console.log(err)
+                resolve("err");
+            }
+            else{
+                console.log(row);
+                resolve(1);
+            }
+        })
+    })
+}
+
+function increaseViewcount(classname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update openclass set viewcount=viewcount+1 where classname=?"
+        conn.query(sql, classname, (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve("err");
+            }
+            else{
+                console.log(row);
+                resolve(1);
+            }
+        })
+    })
+}
+
+function incHeadcount(classname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update openclass set headcount= headcount + 1 where classname=?"
+        conn.query(sql, [classname], (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve("err");
+            }
+            else{
+                resolve (1);
+            }
+        })
+    })
+}
+
+function incApprovalHeadcount(classname, groupname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update grouplist set Approval_headcount= Approval_headcount + 1 where classname=? and groupname=?";
+        conn.query(sql, [classname, groupname], (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve("err");
+            }
+            else{
+                resolve (1);
+            }
+        })
+    })
+}
+function decHeadcount(classname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update openclass set headcount= headcount - 1 where classname=?"
+        conn.query(sql, [classname], (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve("err");
+            }
+            else{
+                resolve (1);
+            }
+        })
+    })
+}
+
+function decApprovalHeadcount(classname, groupname){
+    return new Promise((resolve, reject)=>{
+        let sql = "update grouplist set Approval_headcount= Approval_headcount - 1 where classname=? and groupname=?";
+        conn.query(sql, [classname, groupname], (err, row, fields)=>{
+            if(err){
+                console.log(err);
+                resolve("err");
+            }
+            else{
+                resolve (1);
+            }
+        })
+    })
+}
 module.exports = { LoginFunc, RegisterFunc, GetClasses, FindClass, FindClasses, FindGrouplist, 
-    FindGroup, InsertReqclass, makeClass, grouplist, FindReqclass };
+    FindGroup, InsertReqclass, makeClass, makeGrouplist, FindReqclass, UpdateGrouplistClassname,
+    UpdateReqclassClassname, UpdateClassname, UpdateClasscontent, UpdateApprovalStatus,
+    UpdateAllClassname, FindReqclassList, UpdateUserStatus, UpdateGroup, deleteReqclass, makeGroups,
+    increaseViewcount, incHeadcount, incApprovalHeadcount, decHeadcount, decApprovalHeadcount };
